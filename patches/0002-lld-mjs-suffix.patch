@@ -1,0 +1,8 @@
+--- /tmp/lld-cml.orig	2026-09-02 12:26:59.745471159 +0000
++++ work/llvm-project/lld/tools/lld/CMakeLists.txt	2026-09-01 20:49:02.525170083 +0000
+@@ -42,3 +42,5 @@
+ foreach(link ${LLD_SYMLINKS_TO_CREATE})
+   add_lld_symlink(${link} lld)
+ endforeach()
++
++set_target_properties(lld PROPERTIES SUFFIX ".mjs")
