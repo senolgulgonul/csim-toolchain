@@ -51,3 +51,7 @@ await runCase('echo.c', { stdin: '', expectOut: 'input error\n', expectExit: 1 }
 await runCase('syntax-error.c', { expectCompileFail: true });
 
 console.log('acceptance: all cases pass');
+// Emscripten's node shell sets process.exitCode when clang exits non-zero —
+// which the syntax-error case does on purpose. Exit explicitly so the
+// verdict above is also the process's verdict.
+process.exit(0);
