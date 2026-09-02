@@ -22,12 +22,6 @@ jobs:
           key: ccache-${{ runner.os }}-${{ hashFiles('build.sh') }}
           restore-keys: ccache-${{ runner.os }}-
 
-      - name: Enable ccache for both stages
-        run: |
-          echo "CMAKE_C_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
-          echo "CMAKE_CXX_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
-          echo "EM_COMPILER_WRAPPER=ccache" >> "$GITHUB_ENV"
-
       - name: Build
         run: ./build.sh
 
