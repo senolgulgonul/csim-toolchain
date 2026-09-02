@@ -20,6 +20,15 @@ DIST="$ROOT/dist"
 
 mkdir -p "$ROOT/work" "$DIST"
 
+# ccache only for the native stage 1 build. Never wrap emcc/em++ with a
+# compiler launcher: ccache does not understand the emscripten driver and
+# every CMake try_compile in stage 2 fails (first casualty: the misleading
+# "libstdc++ version must be at least 7.4" error from CheckCompilerVersion).
+CCACHE_LAUNCHER=""
+if command -v ccache >/dev/null 2>&1; then
+  CCACHE_LAUNCHER="-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+fi
+
 # ---------------------------------------------------------------- emsdk
 if [ ! -d "$ROOT/work/emsdk" ]; then
   git clone --depth 1 https://github.com/emscripten-core/emsdk.git "$ROOT/work/emsdk"
@@ -48,7 +57,8 @@ cmake -S "$SRC/llvm" -B "$STAGE1" -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DLLVM_ENABLE_PROJECTS="clang" \
   -DLLVM_TARGETS_TO_BUILD=WebAssembly \
-  -DLLVM_INCLUDE_TESTS=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF
+  -DLLVM_INCLUDE_TESTS=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF \
+  ${CCACHE_LAUNCHER:-}
 ninja -C "$STAGE1" llvm-tblgen clang-tblgen
 
 # ---------------------------------------------------- stage 2: wasm cross build
