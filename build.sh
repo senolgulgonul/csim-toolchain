@@ -89,10 +89,12 @@ emcmake cmake -S "$SRC/llvm" -B "$STAGE2" -G Ninja \
 ninja -C "$STAGE2" clang lld
 
 # ---------------------------------------------------------------- package
-cp "$STAGE2/bin/clang-18.js"  "$DIST/clang.mjs"  2>/dev/null || cp "$STAGE2/bin/clang.js" "$DIST/clang.mjs"
-cp "$STAGE2/bin/clang-18.wasm" "$DIST/clang.wasm" 2>/dev/null || cp "$STAGE2/bin/clang.wasm" "$DIST/clang.wasm"
-cp "$STAGE2/bin/lld.js"  "$DIST/lld.mjs"
-cp "$STAGE2/bin/lld.wasm" "$DIST/lld.wasm"
+# The suffix patch names the outputs plainly (no -18 version tag): clang.mjs,
+# clang.wasm, lld.mjs, lld.wasm. Proven by CI run #4 (both links green).
+cp "$STAGE2/bin/clang.mjs"  "$DIST/clang.mjs"
+cp "$STAGE2/bin/clang.wasm" "$DIST/clang.wasm"
+cp "$STAGE2/bin/lld.mjs"    "$DIST/lld.mjs"
+cp "$STAGE2/bin/lld.wasm"   "$DIST/lld.wasm"
 
 "$ROOT/scripts/package-sysroot.sh" "$WASI_SDK_VER" "$DIST"
 
